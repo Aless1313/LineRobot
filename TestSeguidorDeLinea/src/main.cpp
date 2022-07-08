@@ -30,6 +30,9 @@ const int vDe = 9;    //velocidad de motores derechos
 //Sensores infrarrojos
 const int si_Iz = A0;
 const int si_De = A1;
+const int si_DeE = A2;
+const int si_IzE = A3; 
+
 
 //funciones
 void adelante();
@@ -46,8 +49,11 @@ void setup() {
   pinMode(De2, OUTPUT);
   pinMode(vIz, OUTPUT);
   pinMode(vDe, OUTPUT);
+
   pinMode(si_Iz, INPUT);
   pinMode(si_De, INPUT);
+  pinMode(si_IzE, INPUT);
+  pinMode(si_DeE, INPUT);
 
   //Iniciar pantalla
   display.begin(SSD1306_SWITCHCAPVCC, 0X3C);
@@ -60,6 +66,8 @@ void setup() {
 void loop() {
   int Data_siIz = analogRead(si_Iz);
   int Data_siDe = analogRead(si_De);
+  int Data_siIzE = analogRead(si_IzE);
+  int Data_siDeE = analogRead(si_DeE);
 
   //**************************************************************************************************************************
   //Imprimir valores en pantalla
@@ -67,39 +75,61 @@ void loop() {
   
   display.setCursor(0,0);
   display.setTextSize(1);
-  display.print("Sensor Izquierdo= ");
+  display.print("Sensores Izquierdos= ");
   
   display.setCursor(0,10);
   display.setTextSize(2);
   display.print(Data_siIz);
 
+  display.setCursor(50,10);
+  display.setTextSize(2);
+  display.print(Data_siIzE);
+
   display.setCursor(0,35);
   display.setTextSize(1);
-  display.print("Sensor Izquierdo= ");
+  display.print("Sensores Derechos= ");
   
   display.setCursor(0,45);
   display.setTextSize(2);
   display.print(Data_siDe);
 
+  display.setCursor(50,45);
+  display.setTextSize(2);
+  display.print(Data_siDe);
+
   display.display();
+
+
+  
   //**************************************************************************************************************************
 
   //Si la lectura analogica es menor de 40 es porque detecta blanco o nada
   //Si la lectura es mayor a 40 es porque detecta negro o algo
+  
   if(Data_siIz < 40 && Data_siDe < 40){                   //Ambos sensores detectan blanco -> Ir adelante
     adelante();
+    
   }else if(Data_siIz > 40 && Data_siDe < 40){             //Sensor izquierdo detecta negro -> Moverse hacia la izquierda
-    izquierda();
-  }else if(Data_siIz < 40 && Data_siDe > 40){             //Sensor derecho detecta negro  -> Moverese a la derecha
     derecha();
+    delay(100);
+  }else if(Data_siIz < 40 && Data_siDe > 40){             //Sensor derecho detecta negro  -> Moverese a la derecha
+    izquierda();
+    delay(100);
+  }else if(Data_siIzE < 40){
+    izquierda();
+    delay(200);
+  }else if(Data_siDeE < 40){
+    derecha();
+    delay(200);
   }
+  
 
 }
 
 void adelante(){
 
-  analogWrite(vIz, 100);
-  analogWrite(vDe, 100);
+  analogWrite(vIz, 60);
+  analogWrite(vDe, 60);
 
   digitalWrite(Iz1, LOW);
   digitalWrite(Iz2, HIGH);    //Iz2 en HIGH es adelante
@@ -111,8 +141,8 @@ void adelante(){
 
 void derecha(){
   
-  analogWrite(vIz, 100);
-  analogWrite(vDe, 100);
+  analogWrite(vIz, 55);
+  analogWrite(vDe, 55);
 
   digitalWrite(Iz1, LOW);
   digitalWrite(Iz2, HIGH);
@@ -124,8 +154,8 @@ void derecha(){
 
 void izquierda(){
 
-  analogWrite(vIz, 100);
-  analogWrite(vDe, 100);
+  analogWrite(vIz, 55);
+  analogWrite(vDe, 55);
 
   digitalWrite(Iz1, HIGH);
   digitalWrite(Iz2, LOW);
