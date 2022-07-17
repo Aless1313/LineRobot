@@ -15,6 +15,8 @@
 #define OLED_RESET -1
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+const int btn_calibration = 3;
+
 //Pines de motores
 //Motores del lado izquierdo
 const int Iz1 = 7;
@@ -48,16 +50,16 @@ const int s3I = 30;
 const int outI = 31;
 
 int redD = 0;
-int greenD = 0;
+int greenD = 0;           //Balance de colores en sensor de color Derecho
 int blueD = 0;
 
 int redI = 0;
-int greenI = 0;
+int greenI = 0;           //Balance de colores en sensor izquierdo
 int blueI = 0;
 
 
 
-//funciones
+//Definición de funciones
 void adelante();
 void izquierda();
 void derecha();
@@ -69,20 +71,20 @@ void setup() {
 
   pinMode(Iz1, OUTPUT);
   pinMode(Iz2, OUTPUT);
-  pinMode(De1, OUTPUT);
+  pinMode(De1, OUTPUT);       //Motores
   pinMode(De2, OUTPUT);
   pinMode(vIz, OUTPUT);
   pinMode(vDe, OUTPUT);
 
   pinMode(si_Iz, INPUT);
   pinMode(si_De, INPUT);
-  pinMode(si_IzE, INPUT);
+  pinMode(si_IzE, INPUT);     //Sensores infrarrojos 
   pinMode(si_DeE, INPUT);
   pinMode(si_Fr, INPUT);
 
   pinMode(s0D, OUTPUT);
   pinMode(s1D, OUTPUT);
-  pinMode(s2D, OUTPUT);
+  pinMode(s2D, OUTPUT);         //Sensor de color derecho
   pinMode(s3D, OUTPUT);
   pinMode(outD, INPUT);
   digitalWrite(s0D, HIGH);
@@ -90,15 +92,19 @@ void setup() {
 
   pinMode(s0I, OUTPUT);
   pinMode(s1I, OUTPUT);
-  pinMode(s2I, OUTPUT);
+  pinMode(s2I, OUTPUT);         //Sensor de color izquierdo
   pinMode(s3I, OUTPUT);
   pinMode(outI, INPUT);
   digitalWrite(s0I, HIGH);
   digitalWrite(s1I, HIGH);
+
+  pinMode(btn_calibration, INPUT);
   //***************************************************************************
 
   //Iniciar pantalla
   display.begin(SSD1306_SWITCHCAPVCC, 0X3C);
+  display.display();
+  delay(500);
   display.clearDisplay();
   display.setTextColor(WHITE);
   delay(10);
@@ -199,38 +205,81 @@ void printdata(int SI_iz, int SI_izE, int SI_De, int SI_DeE, int colorD, int col
   //Imprimir valores en pantalla
   display.clearDisplay();
   
-  display.setCursor(0,0);
+  display.setCursor(17, 0);
   display.setTextSize(1);
-  display.print("Sensores Izquierdos= ");
+  display.println("Infrared Sensors");
   
-  display.setCursor(0,10);
+  display.setCursor(6, 10);
   display.setTextSize(1);
-  display.print(SI_iz);
+  display.println(char(174));
 
-  display.setCursor(50,10);
+  display.setCursor(0, 20);
   display.setTextSize(1);
-  display.print(SI_izE);
+  display.println(SI_izE);      //Lectura sensor izquierdo externo
 
-  display.setCursor(0,30);
+  display.setCursor(34, 10);
   display.setTextSize(1);
-  display.print("Sensores Derechos= ");
+  display.println(char(174));
   
-  display.setCursor(0,45);
+  display.setCursor(29, 20);
   display.setTextSize(1);
-  display.print(SI_De);
+  display.print(SI_iz);       //Lectura sensor izquierdo 
 
-  display.setCursor(50,45);
+  display.setCursor(63, 10);
   display.setTextSize(1);
-  display.print(SI_DeE);
+  display.print(char(185));
 
-  display.setCursor(0,60);
+  display.setCursor(58,20);
   display.setTextSize(1);
-  display.print(colorD);
+  display.print(si_Fr);       //Lectura sensor frontal
 
-  display.setCursor(50,60);
+  display.setCursor(94, 10);
   display.setTextSize(1);
-  display.print(colorI);
+  display.print(char(175));
 
+  display.setCursor(85, 20);
+  display.setTextSize(1);
+  display.print(si_De);         //Lectura sensor derecho
+
+  display.setCursor(117, 10);
+  display.setTextSize(1);
+  display.print(char(175));
+
+  display.setCursor(110, 20);
+  display.setTextSize(1);
+  display.print(si_DeE);      //Lectura sensor derecho externo
+
+  display.setCursor(0, 40);
+  display.setTextSize(1);
+  display.print("Green");
+
+  display.setCursor(40, 40);
+  display.setTextSize(1);
+  display.print(char(174));
+
+  display.setCursor(52, 40);
+  display.setTextSize(1);
+  display.print("Color");
+
+  display.setCursor(87, 40);
+  display.setTextSize(1);
+  display.print(char(175));
+
+  display.setCursor(98, 40);
+  display.setTextSize(1);
+  display.print("Green");
+
+  display.setCursor(0, 55);
+  display.setTextSize(1);
+  display.print("Distance: ");
+
+  display.setCursor(55, 55);
+  display.setTextSize(1);
+  display.print("123");
+
+  display.setCursor(75, 55);
+  display.setTextSize(1);
+  display.print("cm");
 
   display.display();
 }
@@ -282,6 +331,5 @@ int colorSelectI(int r, int g, int b){
     return 0;
   }
 }
-
 
 
