@@ -26,30 +26,30 @@ const int Iz2 = 6;
 const int De1 = 5;
 const int De2 = 4;
 
-const int vIz = 10;   //Velocidad de motores izquierdos
-const int vDe = 9;    //velocidad de motores derechos
+const int vIz = 9;   //Velocidad de motores izquierdos
+const int vDe = 8;    //velocidad de motores derechos
 
 //Sensores infrarrojos
-const int si_Iz = A0;   //Izquierdo
+const int si_Iz = A3;   //Izquierdo
 const int si_De = A1;   //Derecho
-const int si_DeE = A2;  //Derecho Externo
-const int si_IzE = A3;  //Izquierdo Externo
-const int si_Fr = A4;   //Frontal
+const int si_DeE = A0;  //Derecho Externo
+const int si_IzE = A4;  //Izquierdo Externo
+const int si_Fr = A2;   //Frontal
 
 //Valores de frecuencia para sensor de color
-const int s0D = 22;
-const int s1D = 23;
-const int s2D = 24;       //Sensor de color izquierdo
-const int s3D = 25;
-const int outD = 26;
+const int s0D = 32;
+const int s1D = 34;
+const int s2D = 38;       //Sensor de color izquierdo
+const int s3D = 36;
+const int outD = 40;
 
-const int s0I = 27;
-const int s1I = 28;
-const int s2I = 29;       //Sensor de color derecho
-const int s3I = 30;
-const int outI = 31;
+const int s0I = 30;
+const int s1I = 26;
+const int s2I = 24;       //Sensor de color derecho
+const int s3I = 28;
+const int outI = 22;
 
-int redD = 0;
+int redD = 0;  
 int greenD = 0;           //Balance de colores en sensor de color Derecho
 int blueD = 0;
 
@@ -63,6 +63,36 @@ int blueI = 0;
 void adelante();
 void izquierda();
 void derecha();
+void colorReadD();
+void colorReadI();
+void printdata(int SI_iz, int SI_izE, int SI_De, int SI_DeE, int colorD, int colorI);
+int colorSelectD(int rd, int gd, int bd);
+int colorSelectI(int ri, int gi, int bi);
+
+
+int colorSelectD(int rd, int gd, int bd){
+  if(rd < bd && gd > bd && rd < 35){
+    return 1;                                 //Rojo
+  }else if(bd < rd && bd  < gd && gd < rd){
+    return 2;                                 //Azul
+  }else if(rd > gd && bd > gd){
+    return 3;                                 //Verde
+  }else{
+    return 0;
+  }
+}
+
+int colorSelectI(int ri, int gi, int bi){
+  if(ri < bi && gi > bi && ri < 35){
+    return 1;                                 //Rojo
+  }else if(bi < ri && bi  < gi && gi < ri){
+    return 2;                                 //Azul
+  }else if(ri > gi && bi> gi){
+    return 3;                                 //Verde
+  }else{
+    return 0;
+  }
+}
 
 
 void setup() {
@@ -126,7 +156,85 @@ void loop() {
   int colorI = colorSelectI(redI, greenI, blueI);
   
   //**************************************************************************************************************************
-  printdata(si_Iz, si_IzE, si_De, si_DeE, colorD, colorI);      //Función para imprimir valores en OLED
+   display.clearDisplay();
+  
+  display.setCursor(17, 0);
+  display.setTextSize(1);
+  display.println("Infrared Sensors");
+  
+  display.setCursor(6, 10);
+  display.setTextSize(1);
+  display.println(char(174));
+
+  display.setCursor(0, 20);
+  display.setTextSize(1);
+  display.println(Data_siIzE);      //Lectura sensor izquierdo externo
+
+  display.setCursor(34, 10);
+  display.setTextSize(1);
+  display.println(char(174));
+  
+  display.setCursor(29, 20);
+  display.setTextSize(1);
+  display.print(Data_siIz);       //Lectura sensor izquierdo 
+
+  display.setCursor(63, 10);
+  display.setTextSize(1);
+  display.print(char(185));
+
+  display.setCursor(58,20);
+  display.setTextSize(1);
+  display.print(Data_siFr);       //Lectura sensor frontal
+
+  display.setCursor(94, 10);
+  display.setTextSize(1);
+  display.print(char(175));
+
+  display.setCursor(85, 20);
+  display.setTextSize(1);
+  display.print(Data_siDe);         //Lectura sensor derecho
+
+  display.setCursor(117, 10);
+  display.setTextSize(1);
+  display.print(char(175));
+
+  display.setCursor(110, 20);
+  display.setTextSize(1);
+  display.print(Data_siDeE);      //Lectura sensor derecho externo
+
+  display.setCursor(0, 40);
+  display.setTextSize(1);
+  display.print(colorI);
+
+  display.setCursor(40, 40);
+  display.setTextSize(1);
+  display.print(char(174));
+
+  display.setCursor(52, 40);
+  display.setTextSize(1);
+  display.print("Color");
+
+  display.setCursor(87, 40);
+  display.setTextSize(1);
+  display.print(char(175));
+
+  display.setCursor(98, 40);
+  display.setTextSize(1);
+  display.print(colorD);
+
+  display.setCursor(0, 55);
+  display.setTextSize(1);
+  display.print("Distance: ");
+
+  display.setCursor(55, 55);
+  display.setTextSize(1);
+  display.print("123");
+
+  display.setCursor(75, 55);
+  display.setTextSize(1);
+  display.print("cm");
+
+  display.display();
   //**************************************************************************************************************************
 
   //Si la lectura analogica es menor de 40 es porque detecta blanco o nada
@@ -137,11 +245,11 @@ void loop() {
     
   }else if(Data_siIz > 40 && Data_siDe < 40){             //Sensor izquierdo detecta negro -> Moverse ligero hacia la izquierda
     derecha();
-    delay(100);
+    
 
   }else if(Data_siIz < 40 && Data_siDe > 40){             //Sensor derecho detecta negro  -> Moverse ligero a la derecha
     izquierda();
-    delay(100);
+ 
 
   }else if(Data_siIzE < 40){                              //Linea en limite izquierdo   ->  Moverse brusco a la izquierda
     izquierda();
@@ -164,8 +272,8 @@ void loop() {
 
 void adelante(){
 
-  analogWrite(vIz, 60);
-  analogWrite(vDe, 60);
+  analogWrite(vIz, 70);
+  analogWrite(vDe, 70);
 
   digitalWrite(Iz1, LOW);
   digitalWrite(Iz2, HIGH);    //Iz2 en HIGH es adelante
@@ -177,24 +285,24 @@ void adelante(){
 
 void derecha(){
   
-  analogWrite(vIz, 55);
-  analogWrite(vDe, 55);
+  analogWrite(vIz, 60);
+  analogWrite(vDe, 0);
 
   digitalWrite(Iz1, LOW);
   digitalWrite(Iz2, HIGH);
 
-  digitalWrite(De1, HIGH);
-  digitalWrite(De2, LOW);
+  digitalWrite(De1, LOW);
+  digitalWrite(De2, HIGH);
 
 }
 
 void izquierda(){
 
-  analogWrite(vIz, 55);
-  analogWrite(vDe, 55);
+  analogWrite(vIz, 0);
+  analogWrite(vDe, 60);
 
-  digitalWrite(Iz1, HIGH);
-  digitalWrite(Iz2, LOW);
+  digitalWrite(Iz1, LOW);
+  digitalWrite(Iz2, HIGH);
 
   digitalWrite(De1, LOW);
   digitalWrite(De2, HIGH);
@@ -306,30 +414,6 @@ void colorReadI(){
 
   digitalWrite(s2I, HIGH);
   greenI = pulseIn(outI, digitalRead(outI) == HIGH ? LOW : HIGH);
-}
-
-int colorSelectD(int r, int g, int b){
-  if(r < b && g > b && r < 35){
-    return 1;                                 //Rojo
-  }else if(b < r && b  < g && g < r){
-    return 2;                                 //Azul
-  }else if(r > g && b > g){
-    return 3;                                 //Verde
-  }else{
-    return 0;
-  }
-}
-
-int colorSelectI(int r, int g, int b){
-  if(r < b && g > b && r < 35){
-    return 1;                                 //Rojo
-  }else if(b < r && b  < g && g < r){
-    return 2;                                 //Azul
-  }else if(r > g && b > g){
-    return 3;                                 //Verde
-  }else{
-    return 0;
-  }
 }
 
 
