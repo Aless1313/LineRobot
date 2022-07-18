@@ -24,14 +24,15 @@ const int Iz2 = 6;
 const int De1 = 5;
 const int De2 = 4;
 
-const int vIz = 10;   //Velocidad de motores izquierdos
-const int vDe = 9;    //velocidad de motores derechos
+const int vIz = 9;   //Velocidad de motores izquierdos
+const int vDe = 8;    //velocidad de motores derechos
 
 //Sensores infrarrojos
-const int si_Iz = A0;
+const int si_Iz = A3;
 const int si_De = A1;
-const int si_DeE = A2;
-const int si_IzE = A3; 
+const int si_DeE = A0;
+const int si_IzE = A4;
+const int si_Fr = A2; 
 
 
 //funciones
@@ -111,16 +112,16 @@ void loop() {
     
   }else if(Data_siIz > 40 && Data_siDe < 40){             //Sensor izquierdo detecta negro -> Moverse hacia la izquierda
     derecha();
-    delay(100);
+ 
   }else if(Data_siIz < 40 && Data_siDe > 40){             //Sensor derecho detecta negro  -> Moverese a la derecha
     izquierda();
-    delay(100);
+  
   }else if(Data_siIzE < 40){
     izquierda();
-    delay(200);
+    
   }else if(Data_siDeE < 40){
     derecha();
-    delay(200);
+   
   }
   
 
@@ -141,24 +142,24 @@ void adelante(){
 
 void derecha(){
   
-  analogWrite(vIz, 55);
+  analogWrite(vIz, 80);
   analogWrite(vDe, 55);
 
   digitalWrite(Iz1, LOW);
   digitalWrite(Iz2, HIGH);
 
-  digitalWrite(De1, HIGH);
-  digitalWrite(De2, LOW);
+  digitalWrite(De1, LOW);
+  digitalWrite(De2, HIGH);
 
 }
 
 void izquierda(){
 
   analogWrite(vIz, 55);
-  analogWrite(vDe, 55);
+  analogWrite(vDe, 80);
 
-  digitalWrite(Iz1, HIGH);
-  digitalWrite(Iz2, LOW);
+  digitalWrite(Iz1, LOW);
+  digitalWrite(Iz2, HIGH);
 
   digitalWrite(De1, LOW);
   digitalWrite(De2, HIGH);
