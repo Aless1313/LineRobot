@@ -96,12 +96,12 @@ void loop() {
 
   display.setCursor(50,45);
   display.setTextSize(2);
-  display.print(Data_siDe);
+  display.print(Data_siDeE);
 
   display.display();
 
 
-  
+ 
   //**************************************************************************************************************************
 
   //Si la lectura analogica es menor de 40 es porque detecta blanco o nada
@@ -109,19 +109,22 @@ void loop() {
   
   if(Data_siIz < 40 && Data_siDe < 40){                   //Ambos sensores detectan blanco -> Ir adelante
     adelante();
-    
   }else if(Data_siIz > 40 && Data_siDe < 40){             //Sensor izquierdo detecta negro -> Moverse hacia la izquierda
-    derecha();
- 
-  }else if(Data_siIz < 40 && Data_siDe > 40){             //Sensor derecho detecta negro  -> Moverese a la derecha
-    izquierda();
-  
-  }else if(Data_siIzE < 40){
-    izquierda();
     
-  }else if(Data_siDeE < 40){
-    derecha();
+      izquierda();
+      delay(100);
    
+  }else if(Data_siIz < 40 && Data_siDe > 40){             //Sensor derecho detecta negro  -> Moverese a la derecha
+    
+      derecha();
+    delay(100);
+  }else if(Data_siIzE < 40){
+    derecha();
+  delay(100);
+  }else if(Data_siDeE < 40){
+    izquierda();
+    delay(100);
+    
   }
   
 
@@ -129,8 +132,8 @@ void loop() {
 
 void adelante(){
 
-  analogWrite(vIz, 60);
-  analogWrite(vDe, 60);
+  analogWrite(vIz, 50);
+  analogWrite(vDe, 50);
 
   digitalWrite(Iz1, LOW);
   digitalWrite(Iz2, HIGH);    //Iz2 en HIGH es adelante
@@ -142,27 +145,26 @@ void adelante(){
 
 void derecha(){
   
-  analogWrite(vIz, 80);
-  analogWrite(vDe, 55);
+    analogWrite(vIz, 35);
+    analogWrite(vDe, 35);
 
-  digitalWrite(Iz1, LOW);
-  digitalWrite(Iz2, HIGH);
+    digitalWrite(Iz1, LOW);
+    digitalWrite(Iz2, HIGH);
 
-  digitalWrite(De1, LOW);
-  digitalWrite(De2, HIGH);
-
+    digitalWrite(De1, HIGH);
+    digitalWrite(De2, LOW);
+  
 }
 
 void izquierda(){
 
-  analogWrite(vIz, 55);
-  analogWrite(vDe, 80);
+    analogWrite(vIz, 35);
+    analogWrite(vDe, 35);
 
-  digitalWrite(Iz1, LOW);
-  digitalWrite(Iz2, HIGH);
+    digitalWrite(Iz1, HIGH);
+    digitalWrite(Iz2, LOW);
 
-  digitalWrite(De1, LOW);
-  digitalWrite(De2, HIGH);
+    digitalWrite(De1, LOW);
+    digitalWrite(De2, HIGH);
+  
 }
-
-
