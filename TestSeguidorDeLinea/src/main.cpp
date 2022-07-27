@@ -100,6 +100,7 @@ void loop() {
 
   display.display();
 
+  
 
  
   //**************************************************************************************************************************
@@ -115,25 +116,30 @@ void loop() {
       delay(100);
    
   }else if(Data_siIz < 40 && Data_siDe > 40){             //Sensor derecho detecta negro  -> Moverese a la derecha
-    
       derecha();
     delay(100);
   }else if(Data_siIzE < 40){
     derecha();
-  delay(100);
+  delay(300);
   }else if(Data_siDeE < 40){
     izquierda();
-    delay(100);
-    
+    delay(300);
+  }else if(Data_siIz > 40 && Data_siIzE > 40){
+    izquierda();
+    delay(2000);
+  }else if(Data_siDe > 40 && Data_siDeE > 40){
+    derecha();
+    delay(2000);
   }
-  
+
+
 
 }
 
 void adelante(){
 
-  analogWrite(vIz, 50);
-  analogWrite(vDe, 50);
+  analogWrite(vIz, 35);
+  analogWrite(vDe, 35);
 
   digitalWrite(Iz1, LOW);
   digitalWrite(Iz2, HIGH);    //Iz2 en HIGH es adelante
@@ -145,8 +151,8 @@ void adelante(){
 
 void derecha(){
   
-    analogWrite(vIz, 35);
-    analogWrite(vDe, 35);
+    analogWrite(vIz, 50);
+    analogWrite(vDe, 50);
 
     digitalWrite(Iz1, LOW);
     digitalWrite(Iz2, HIGH);
@@ -158,8 +164,8 @@ void derecha(){
 
 void izquierda(){
 
-    analogWrite(vIz, 35);
-    analogWrite(vDe, 35);
+    analogWrite(vIz, 50);
+    analogWrite(vDe, 50);
 
     digitalWrite(Iz1, HIGH);
     digitalWrite(Iz2, LOW);
